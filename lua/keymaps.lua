@@ -30,4 +30,4 @@ vim.keymap.set('n', '<S-tab>', '<cmd>tabp<CR>')
 vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>')
 
 -- Open terminal horizontal split
-vim.keymap.set('n', '<leader>th', '<cmd>20split | terminal<CR>A')
+vim.keymap.set('n', '<leader>tt', '<cmd>20split | terminal<CR>A')
