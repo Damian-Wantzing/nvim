@@ -61,7 +61,7 @@ return {
           sorting_strategy = 'ascending',
           mappings = {
             i = {
-              ['<CR>'] = actions.select_tab,
+              ['<CR>'] = actions.select_default,
             },
             n = {
               ['<CR>'] = actions.select_tab,
