@@ -62,6 +62,7 @@ return {
           mappings = {
             i = {
               ['<CR>'] = actions.select_default,
+              ['<CR><CR>'] = actions.select_tab,
             },
             n = {
               ['<CR>'] = actions.select_tab,
