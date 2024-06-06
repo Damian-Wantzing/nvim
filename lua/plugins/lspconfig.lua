@@ -164,16 +164,16 @@ return {
           root_dir = require('lspconfig').util.root_pattern('.git', 'releasenotes.txt', 'composer.json'),
         },
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        tsserver = {},
         --
 
         lua_ls = {
@@ -207,6 +207,8 @@ return {
         'stylua', -- Used to format Lua code
         'gopls',
         'intelephense',
+        'rust_analyzer',
+        'tsserver',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
