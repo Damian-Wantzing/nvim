@@ -58,3 +58,6 @@ vim.opt.scrolloff = 10
 -- set tabstop to 4 spaces instead of 8
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+
+-- use spaces instead of tabs
+vim.opt.expandtab = true
