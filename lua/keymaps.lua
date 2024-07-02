@@ -30,7 +30,7 @@ vim.keymap.set('n', '<S-tab>', '<cmd>tabp<CR>')
 vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>')
 
 -- Open terminal horizontal split
-vim.keymap.set('n', '<leader>tt', '<cmd>20split | terminal<CR>A')
+vim.keymap.set('n', '<leader>tt', '<cmd>20split | :lcd %:p:h | terminal<CR>A')
 
 -- semicolon should turn into colon in normal mode
 vim.keymap.set('n', ';', ':')
