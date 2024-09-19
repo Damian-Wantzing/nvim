@@ -15,6 +15,11 @@ return {
   },
   opts = {
     filesystem = {
+      filtered_items = {
+        visible = true,
+        show_hidden_count = true,
+        hide_dotfiles = false,
+      },
       use_libuv_file_watcher = true,
       follow_current_file = { enabled = true },
       window = {
