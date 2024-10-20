@@ -101,6 +101,9 @@ return {
           --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
+          -- open multiple errors in a floating diagnostics window
+          map('<leader>od', vim.diagnostic.open_float, '[O]pen [Diagnostics]')
+
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
@@ -158,7 +161,6 @@ return {
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local util = require 'lspconfig.util'
       local servers = {
         intelephense = {
           root_dir = require('lspconfig').util.root_pattern('.git', 'releasenotes.txt', 'composer.json'),

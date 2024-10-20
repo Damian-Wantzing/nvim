@@ -12,6 +12,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal' })
 vim.keymap.set('t', '<Esc><Esc>', '<cmd>q<CR>', { desc = 'Exit terminal' })
 
+-- go into normal mode in the terminal
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Go into normal mode in terminal' })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
