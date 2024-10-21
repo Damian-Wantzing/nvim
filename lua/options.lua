@@ -61,3 +61,6 @@ vim.opt.shiftwidth = 4
 
 -- use spaces instead of tabs
 vim.opt.expandtab = true
+
+-- turn off list
+vim.opt.list = false

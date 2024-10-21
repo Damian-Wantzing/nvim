@@ -22,11 +22,6 @@ return {
       },
       use_libuv_file_watcher = true,
       follow_current_file = { enabled = true },
-      window = {
-        mappings = {
-          ['\\'] = 'close_window',
-        },
-      },
     },
   },
 }
