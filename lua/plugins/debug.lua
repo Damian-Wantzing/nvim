@@ -111,7 +111,52 @@ return {
       args = { os.getenv 'HOME' .. '/.local/share/nvim/mason/bin/php-debug-adapter' },
     }
 
-    -- Define PHP debugging configuration
+    -- GDB debug adapter
+    dap.adapters.gdb = {
+      type = 'executable',
+      command = 'gdb',
+      args = { '-i', 'dap' }, -- Use DAP mode
+    }
+
+    -- Define Rust launch config
+    dap.configurations.rust = {
+      {
+        name = 'Launch with GDB',
+        type = 'gdb',
+        request = 'launch',
+        program = function()
+          return vim.fn.getcwd() .. '/target/debug/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+        end,
+        cwd = '${workspaceFolder}',
+        args = function()
+          local input = vim.fn.input 'Enter arguments: '
+          return vim.split(input, ' ') -- Split input into an argument list
+        end,
+      },
+    }
+    -- Define C++ launch configuration
+    dap.configurations.cpp = {
+      {
+        name = 'Launch C++ Program with GDB', -- Custom name for the configuration
+        type = 'gdb', -- Use gdb as the debugger
+        request = 'launch', -- We're launching the program
+        program = function()
+          local folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+          if folder_name == 'dev' then
+            folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:t')
+          end
+          return vim.fn.getcwd() .. folder_name
+        end,
+        cwd = '${workspaceFolder}', -- Set working directory to the workspace folder
+        stopOnEntry = false, -- Don't stop at entry point
+        args = function()
+          local input = vim.fn.input 'Enter arguments: '
+          return vim.split(input, ' ') -- Convert input string into a table of arguments
+        end,
+      },
+    }
+
+    -- Define PHP launch config
     dap.configurations.php = {
       {
         type = 'php',
