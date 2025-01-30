@@ -45,8 +45,49 @@ return {
       },
     }
 
+    _G.program_path = nil
+
+    local handle_selection = function(prompt_bufnr)
+      local selection = require('telescope.actions.state').get_selected_entry()
+      require('telescope.actions').close(prompt_bufnr)
+
+      _G.program_path = selection.path
+
+      dap.continue()
+    end
+
+    vim.keymap.set('n', '<F5>', function()
+      if dap.session() then
+        dap.continue()
+        return
+      end
+
+      _G.program_path = nil
+
+      local telescope = require 'telescope.builtin'
+
+      telescope.find_files {
+        hidden = true, -- Include hidden files
+        no_ignore = true, -- Include files that are ignored by .gitignore or other ignore files
+        follow = true, -- Follow symlinks
+        attach_mappings = function(_, map)
+          map('i', '<CR>', function(prompt_bufnr)
+            handle_selection(prompt_bufnr)
+          end)
+          map('n', '<CR>', function(prompt_bufnr)
+            handle_selection(prompt_bufnr)
+          end)
+          map('n', '<Esc>', function(prompt_bufnr)
+            require('telescope.actions').close(prompt_bufnr)
+            dap.continue()
+          end)
+          return true
+        end,
+      }
+    end, { desc = 'Debug: Start/Continue' })
+
     -- Basic debugging keymaps, feel free to change to your liking!
-    vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
+    -- vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
     vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
@@ -95,6 +136,14 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
+    local debug_program_path = function()
+      if _G.program_path then
+        return _G.program_path
+      end
+
+      return nil
+    end
+
     -- Install golang specific config
     require('dap-go').setup {
       delve = {
@@ -125,7 +174,7 @@ return {
         type = 'gdb',
         request = 'launch',
         program = function()
-          return vim.fn.getcwd() .. '/target/debug/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+          return debug_program_path() or vim.fn.getcwd() .. '/target/debug/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
         end,
         cwd = '${workspaceFolder}',
         args = function()
@@ -145,7 +194,7 @@ return {
           if folder_name == 'dev' then
             folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:t')
           end
-          return vim.fn.getcwd() .. folder_name
+          return debug_program_path() or vim.fn.getcwd() .. folder_name
         end,
         cwd = '${workspaceFolder}', -- Set working directory to the workspace folder
         stopOnEntry = false, -- Don't stop at entry point
@@ -163,8 +212,14 @@ return {
         request = 'launch',
         name = 'Listen for Xdebug',
         port = 9003, -- Default port for Xdebug
-        cwd = '${fileDirname}',
-        program = '${file}',
+        cwd = '${workspaceFolder}',
+        program = function()
+          return debug_program_path() or vim.fn.expand '%t'
+        end,
+        args = function()
+          local input = vim.fn.input 'Enter arguments: '
+          return vim.split(input, ' ') -- Split input into an argument list
+        end,
       },
     }
   end,
