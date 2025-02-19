@@ -1,5 +1,6 @@
 local telescope = require 'telescope.builtin'
 local finders = require 'telescope.finders'
+local previewers = require 'telescope.previewers'
 
 local function git_diff()
   -- local output = vim.fn.systemlist 'git rev-parse --is-inside-work-tree 2>/dev/null'
@@ -48,10 +49,23 @@ local function diff_files()
   return files
 end
 
+local diff_preview = previewers.new_termopen_previewer {
+  get_command = function(entry)
+    local output = vim.fn.system 'git rev-parse --is-inside-work-tree 2>/dev/null'
+
+    if vim.v.shell_error == 0 then
+      return { 'git', 'diff', entry.value }
+    end
+
+    return { 'svn', 'diff', entry.value }
+  end,
+}
+
 local function pick_diff_files()
   telescope.find_files {
     prompt_title = 'Diff Files',
     cwd = vim.fn.getcwd(),
+    previewer = diff_preview,
     finder = finders.new_table {
       results = diff_files(),
     },
