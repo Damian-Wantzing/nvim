@@ -163,7 +163,7 @@ return {
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         intelephense = {
-          root_dir = require('lspconfig').util.root_pattern('.git', 'releasenotes.txt', 'composer.json'),
+          root_dir = require('lspconfig').util.root_pattern('.git', 'releasenotes.txt', 'composer.json', 'test.php'),
         },
         -- clangd = {},
         gopls = {},

@@ -32,6 +32,8 @@ return {
     init = function()
       vim.cmd.colorscheme 'carbonfox'
 
+      vim.api.nvim_set_hl(0, 'Cursor', { fg = '#f2f4f8', bg = '#ffcc00' })
+
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
     end,
