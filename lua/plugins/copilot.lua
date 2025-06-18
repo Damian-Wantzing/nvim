@@ -26,5 +26,7 @@ return {
   config = function()
     -- set keymap for checking status of copilot
     vim.keymap.set('n', '<leader>cs', '<cmd>Copilot status<CR>')
+
+    reload()
   end,
 }
