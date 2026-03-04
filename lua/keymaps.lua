@@ -35,5 +35,17 @@ vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>')
 -- Open terminal horizontal split
 vim.keymap.set('n', '<leader>tt', '<cmd>20split | :lcd %:p:h | terminal<CR>A')
 
+-- Open terminal horizontal split
+vim.keymap.set('n', '<leader>tr', '<cmd>20split | terminal<CR>A')
+
 -- semicolon should turn into colon in normal mode
 vim.keymap.set('n', ';', ':')
+
+-- relative line numbers toggle
+vim.keymap.set('n', '<leader>trn', function()
+  if vim.opt.relativenumber:get() then
+    vim.opt.relativenumber = false
+  else
+    vim.opt.relativenumber = true
+  end
+end, { desc = 'Toggle relative line numbers' })

@@ -10,6 +10,8 @@ require 'autocommands'
 -- Install Lazy
 require 'lazy-bootstrap'
 
+require 'compile'
+
 -- Set up lazy
 require('lazy').setup(
   'plugins',
