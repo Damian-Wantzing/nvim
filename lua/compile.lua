@@ -11,7 +11,7 @@ local function buffer()
   -- open a scratch window
   buf = vim.api.nvim_create_buf(false, true)
   vim.bo[buf].buftype = 'nofile'
-  vim.bo[buf].bufhidden = 'wipe'
+  vim.bo[buf].bufhidden = 'hide'
   vim.bo[buf].swapfile = false
   vim.bo[buf].modified = false
   vim.bo[buf].modifiable = true
@@ -55,7 +55,7 @@ local function execute(cmd, dir)
 
   window.set_buffer_in_right(buffer())
 
-  local job_id = vim.fn.jobstart(vim.fn.has 'win32' and { 'powershell', '-NoProfile', '-Command', cmd } or { 'sh', '-c', cmd }, {
+  local job_id = vim.fn.jobstart(vim.fn.has 'win32' == 1 and { 'powershell', '-NoProfile', '-Command', cmd } or { 'sh', '-c', cmd }, {
     cwd = dir,
 
     -- IMPORTANT: stream, don't wait

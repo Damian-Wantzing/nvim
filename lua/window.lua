@@ -7,7 +7,7 @@ local right = nil
 local stack = {}
 
 local function new_right_window(buf)
-  right = vim.api.nvim_open_win(buf, true, {
+  right = vim.api.nvim_open_win(buf, false, {
     split = 'right',
   })
   return right
