@@ -24,13 +24,30 @@ local function right_window(buf)
     return new_right_window(buf)
   end
 
-  local config = vim.api.nvim_win_get_config(windows[2])
-  if config.relative ~= '' then
+  if #windows == 2 then
+    local left_buf = vim.api.nvim_win_get_buf(windows[1])
+    if left_buf and vim.bo[left_buf].filetype == 'neo-tree' then
+      return new_right_window(buf)
+    end
+  end
+
+  local right_win = windows[1]
+  local right_col = vim.api.nvim_win_get_position(right_win)[2]
+
+  for _, win in ipairs(windows) do
+    local col = vim.api.nvim_win_get_position(win)[2]
+    if col > right_col and vim.api.nvim_win_get_config(win).relative == '' then
+      right_col = col
+      right_win = win
+    end
+  end
+
+  if right_win == windows[1] then
     return new_right_window(buf)
   end
 
-  right = windows[2]
-  return right
+  right = right_win
+  return right_win
 end
 
 local function index_of(table, value)

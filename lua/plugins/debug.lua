@@ -130,7 +130,7 @@ return {
     vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
     vim.fn.sign_define('DapBreakpointCondition', { text = '🟡', texthl = '', linehl = '', numhl = '' })
     vim.fn.sign_define('DapLogPoint', { text = '🟢', texthl = '', linehl = '', numhl = '' })
-    vim.fn.sign_define('DapStopped', { text = '➡️', texthl = '', linehl = 'DapStoppedLine', numhl = '' })
+    vim.fn.sign_define('DapStopped', { text = '▶', texthl = '', linehl = 'DapStoppedLine', numhl = '' })
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
@@ -140,70 +140,21 @@ return {
       if _G.program_path then
         return _G.program_path
       end
-
       return nil
     end
+
+    local is_win = vim.fn.has 'win32' == 1
 
     -- Install golang specific config
     require('dap-go').setup {
       delve = {
         -- On Windows delve must be run attached or it crashes.
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
-        detached = vim.fn.has 'win32' == 0,
+        detached = not is_win,
       },
     }
 
-    -- Define PHP debug adapter
-    dap.adapters.php = {
-      type = 'executable',
-      command = 'bash',
-      args = { os.getenv 'HOME' .. '/.local/share/nvim/mason/bin/php-debug-adapter' },
-    }
-
-    -- GDB debug adapter
-    dap.adapters.gdb = {
-      type = 'executable',
-      command = 'gdb',
-      args = { '-i', 'dap' }, -- Use DAP mode
-    }
-
-    -- Define Rust launch config
-    dap.configurations.rust = {
-      {
-        name = 'Launch with GDB',
-        type = 'gdb',
-        request = 'launch',
-        program = function()
-          return debug_program_path() or vim.fn.getcwd() .. '/target/debug/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-        end,
-        cwd = '${workspaceFolder}',
-        args = function()
-          local input = vim.fn.input 'Enter arguments: '
-          return vim.split(input, ' ') -- Split input into an argument list
-        end,
-      },
-    }
-    -- Define C++ launch configuration
-    dap.configurations.cpp = {
-      {
-        name = 'Launch C++ Program with GDB', -- Custom name for the configuration
-        type = 'gdb', -- Use gdb as the debugger
-        request = 'launch', -- We're launching the program
-        program = function()
-          local folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-          if folder_name == 'dev' then
-            folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:t')
-          end
-          return debug_program_path() or vim.fn.getcwd() .. folder_name
-        end,
-        cwd = '${workspaceFolder}', -- Set working directory to the workspace folder
-        stopOnEntry = false, -- Don't stop at entry point
-        args = function()
-          local input = vim.fn.input 'Enter arguments: '
-          return vim.split(input, ' ') -- Convert input string into a table of arguments
-        end,
-      },
-    }
+    local mason_bin = is_win and vim.fn.stdpath 'data' .. '\\mason\\bin\\' or vim.fn.stdpath 'data' .. '/mason/bin/'
 
     -- Define PHP launch config
     dap.configurations.php = {
@@ -222,5 +173,73 @@ return {
         end,
       },
     }
+
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        command = mason_bin .. (is_win and 'codelldb.cmd' or 'codelldb'),
+        args = { '--port', '${port}' },
+      },
+    }
+
+    -- Define Rust launch config
+    dap.configurations.rust = {
+      {
+        name = 'Launch (CodeLLDB)',
+        type = 'codelldb',
+        request = 'launch',
+        program = function()
+          local exe = vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. (is_win and '.exe' or '')
+          return debug_program_path() or (vim.fn.getcwd() .. (is_win and '\\target\\debug\\' or '/target/debug/') .. exe)
+        end,
+        cwd = '${workspaceFolder}',
+        args = function()
+          local input = vim.fn.input 'Enter arguments: '
+          return input == '' and {} or vim.split(input, '%s+')
+        end,
+      },
+    }
+
+    -- Define C++ launch configuration
+    dap.configurations.cpp = {
+      {
+        name = 'Launch C++ (CodeLLDB)',
+        type = 'codelldb',
+        request = 'launch', -- We're launching the program
+        program = function()
+          local folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+          if folder_name == 'dev' then
+            folder_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:t')
+          end
+          local exe = folder_name .. (is_win and '.exe' or '')
+          return debug_program_path() or (vim.fn.getcwd() .. (is_win and '\\' or '/') .. exe)
+        end,
+        cwd = '${workspaceFolder}', -- Set working directory to the workspace folder
+        stopOnEntry = false, -- Don't stop at entry point
+        args = function()
+          local input = vim.fn.input 'Enter arguments: '
+          return input == '' and {} or vim.split(input, '%s+')
+        end,
+      },
+    }
+
+    -- Same config for C
+    dap.configurations.c = dap.configurations.cpp
+
+    if is_win then
+      -- Define PHP debug adapter
+      dap.adapters.php = {
+        type = 'executable',
+        command = mason_bin .. 'php-debug-adapter.cmd',
+      }
+    else
+      -- Define PHP debug adapter
+      dap.adapters.php = {
+        type = 'executable',
+        command = 'bash',
+        args = { mason_bin .. 'php-debug-adapter' },
+      }
+    end
   end,
 }

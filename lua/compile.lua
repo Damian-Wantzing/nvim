@@ -55,7 +55,7 @@ local function execute(cmd, dir)
 
   window.set_buffer_in_right(buffer())
 
-  local job_id = vim.fn.jobstart({ 'sh', '-c', cmd }, {
+  local job_id = vim.fn.jobstart(vim.fn.has 'win32' and { 'powershell', '-NoProfile', '-Command', cmd } or { 'sh', '-c', cmd }, {
     cwd = dir,
 
     -- IMPORTANT: stream, don't wait
@@ -89,7 +89,7 @@ local function find_build_file()
     if vim.uv.fs_stat(dir .. '/Makefile') ~= nil then
       return 'make clean all', dir
     elseif vim.uv.fs_stat(dir .. '/build.bat') ~= nil then
-      return 'build.bat', dir
+      return './build.bat', dir
     elseif dir == cwd then
       return nil, nil
     else

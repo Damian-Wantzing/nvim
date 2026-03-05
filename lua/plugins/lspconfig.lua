@@ -215,6 +215,7 @@ return {
         'intelephense',
         'rust_analyzer',
         'php-debug-adapter',
+        'codelldb',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
