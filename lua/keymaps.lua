@@ -8,8 +8,7 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal' })
+-- Exit terminal mode in the builtin terminal with a shortcut
 vim.keymap.set('t', '<Esc><Esc>', '<cmd>q<CR>', { desc = 'Exit terminal' })
 
 -- go into normal mode in the terminal
@@ -31,12 +30,6 @@ vim.keymap.set('n', '<S-tab>', '<cmd>tabp<CR>')
 
 -- Leader + x to close a buffer
 vim.keymap.set('n', '<leader>x', '<cmd>bd<CR>')
-
--- Open terminal horizontal split
-vim.keymap.set('n', '<leader>tt', '<cmd>20split | :lcd %:p:h | terminal<CR>A')
-
--- Open terminal horizontal split
-vim.keymap.set('n', '<leader>tr', '<cmd>20split | terminal<CR>A')
 
 -- semicolon should turn into colon in normal mode
 vim.keymap.set('n', ';', ':')

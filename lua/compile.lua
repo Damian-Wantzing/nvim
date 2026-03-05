@@ -1,29 +1,7 @@
 local buf
 local current_job
 
-local function right_split()
-  local windows = vim.api.nvim_tabpage_list_wins(0)
-
-  if #windows == 1 then
-    local window = vim.api.nvim_open_win(buf, true, {
-      split = 'right',
-    })
-    return window
-  end
-
-  local right_window = windows[1]
-  local right_column = vim.api.nvim_win_get_position(right_window)[2]
-
-  for _, window in ipairs(windows) do
-    local column = vim.api.nvim_win_get_position(window)[2]
-    if column > right_column then
-      right_column = column
-      right_window = window
-    end
-  end
-
-  return right_window
-end
+local window = require 'window'
 
 local function buffer()
   if buf and vim.api.nvim_buf_is_valid(buf) then
@@ -37,8 +15,6 @@ local function buffer()
   vim.bo[buf].swapfile = false
   vim.bo[buf].modified = false
   vim.bo[buf].modifiable = true
-
-  vim.api.nvim_win_set_buf(right_split(), buf)
 
   return buf
 end
@@ -76,6 +52,8 @@ local function execute(cmd, dir)
   end
 
   vim.api.nvim_buf_set_lines(buffer(), 0, -1, false, {})
+
+  window.set_buffer_in_right(buffer())
 
   local job_id = vim.fn.jobstart({ 'sh', '-c', cmd }, {
     cwd = dir,

@@ -11,6 +11,7 @@ require 'autocommands'
 require 'lazy-bootstrap'
 
 require 'compile'
+require 'terminal'
 
 -- Set up lazy
 require('lazy').setup(
